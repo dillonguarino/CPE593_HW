@@ -44,9 +44,6 @@ public:
             if(p==nullptr)
                 return false;
         }
- /*       for(unsigned int i=0; i < 26; i++)
-            if(p->child[i] != nullptr)
-                return true; */
         return true;
     }
 };
@@ -57,13 +54,16 @@ int n = 1;
 vector<vector<char>> board;
 
 void boggle(string word, int row, int col, vector<vector <bool>> used) {
-    if(row < 0 || row >= n || col < 0 || col >= n)
+    if(row < 0 || row > n || col < 0 || col > n)
         return;
     if(used[row][col])
         return;
     used[row][col] = true;
+    cout << "Word: " << word << "  row: " << row << "  col: " << col << endl;
+
     word+=board[row][col];
-    //cout << "Word: " << word << "  row: " << row << "  col: " << col << endl;
+    cout << board[row][col] << endl;
+    cout << word << endl;
 
     if(!dict.containsPrefix(word))
         return;
