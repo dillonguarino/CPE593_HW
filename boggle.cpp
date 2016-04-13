@@ -1,3 +1,13 @@
+/*
+Dillon Guarino
+
+For reference to trie traversal:
+http://stackoverflow.com/questions/13685687/how-to-print-all-words-in-a-trie
+
+Looked at this boggle code for some inspiration:
+https://gist.github.com/davidreynolds/2865498
+
+*/
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -49,10 +59,29 @@ public:
                 return true; */
         return true;
     }
+    void traversePrint(string word, Node const& node) {
+        if(node.isWord)
+            cout << word << endl;
+        for(int i = 0; i < 26; i++)
+        {
+            Node* p = node.child[i];
+            if(p) {
+                word+=(i+'a');
+                traversePrint(word,*p);
+                word.pop_back();
+            }
+        }
+    }
+
+    void printTrie() {
+        Node *temp = root;
+        traversePrint("",*temp);
+    }
 };
 
 
 Trie dict;
+Trie validWord;
 int n = 1;
 vector<vector<char>> board;
 
@@ -67,8 +96,10 @@ void boggle(string word, int row, int col, vector<vector <bool>> used) {
 
     if(!dict.containsPrefix(word))
         return;
+    if(validWord.contains(word))
+        return;
     if(dict.contains(word) && word.length() >= 3)
-        cout << word << endl;
+        validWord.add(word);
     boggle(word, row-1, col-1, used);
     boggle(word, row-1, col, used);
     boggle(word, row-1, col+1, used);
@@ -112,7 +143,7 @@ int main() {
         used.resize(n);
         for(int i = 0; i < n; i++) {
             board[i].resize(n);
-            used[i].resize(n);
+            used[i].resize(n,false);
             for(int j = 0; j<n; j++) {
                 dataFile >> board[i][j];
                 cout << board[i][j] << " ";
@@ -121,8 +152,9 @@ int main() {
         }
         for(int i = 0; i < n; i++)
             for(int j = 0; j<n; j++)
-                used[i][j] = false;
-        boggle(word, 0, 2, used);
+                boggle(word, i, j, used);
+
+
     }
     else {
         dataFile.close();
@@ -130,6 +162,8 @@ int main() {
         return 0;
     }
     dataFile.close();
+
+    validWord.printTrie();
 
     return 0;
 }
